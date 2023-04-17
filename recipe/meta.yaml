@@ -10,7 +10,11 @@ source:
   sha256: {{ sha256 }}
 
 build:
-  number: 0
+  number: 1
+  
+requirements:
+  run_constrained:
+    - cuda-nvtx <0.0.0a0
 
 test:
   commands:
