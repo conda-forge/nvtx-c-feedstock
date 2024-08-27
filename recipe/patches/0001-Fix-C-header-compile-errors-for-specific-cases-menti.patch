@@ -1,0 +1,109 @@
+From a6737b809494ed73027c6c60fd64fb124be15e8a Mon Sep 17 00:00:00 2001
+From: Jason Cohen <jcohen@nvidia.com>
+Date: Fri, 26 Apr 2024 03:59:33 -0500
+Subject: [PATCH] Fix C header compile errors for specific cases mentioned in
+ Issues/Pull Requests
+
+- Compilation on GCC with -std=gnu90 is now supported
+    - Stopped using "inline" on non-MSVC compilers unless on C++ or C99.
+    - For C before 99 on GCC-like compilers, use __inline__ instead
+- Use lowercase "w" in #include <windows.h> to support building on Linux with Windows headers
+    - Does not affect behavior on Windows with case-insensitive filesystem
+- Removed usage of PATH_MAX, which required an extra Linux-specific header
+    - This is only used for setting a path buffer size, which in turn is only used on Android
+    - Set to hard-coded 16K instead -- buffer size is respected, will not overrun
+    - On Windows, also stopped using MAX_PATH and changed to 16K instead
+- Move C-language #includes out of Linux-specific #if region, now use these on Windows too
+    - Necessary when WIN32_LEAN_AND_MEAN is defined, because Windows.h won't include stdlib.h
+    - Also removed redundant #includes
+
+Resolves PR #63 by simonbyrne
+Resolves PR #84 by NBickford-NV
+---
+ c/include/nvtx3/nvToolsExt.h          |  4 ++++
+ c/include/nvtx3/nvtxDetail/nvtxImpl.h | 17 +++++++----------
+ c/include/nvtx3/nvtxDetail/nvtxInit.h |  4 ++--
+ 3 files changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/c/include/nvtx3/nvToolsExt.h b/c/include/nvtx3/nvToolsExt.h
+index 1093838..b675046 100644
+--- a/c/include/nvtx3/nvToolsExt.h
++++ b/c/include/nvtx3/nvToolsExt.h
+@@ -159,7 +159,11 @@
+ #define NVTX_INLINE_STATIC __inline static
+ #else /*defined(__GNUC__)*/
+ #define NVTX_API
++#if defined(__cplusplus) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
+ #define NVTX_INLINE_STATIC inline static
++#else
++#define NVTX_INLINE_STATIC __inline__ static
++#endif
+ #endif /* Platform */
+ 
+ #if defined(NVTX_NO_IMPL)
+diff --git a/c/include/nvtx3/nvtxDetail/nvtxImpl.h b/c/include/nvtx3/nvtxDetail/nvtxImpl.h
+index 590ce90..ab44809 100644
+--- a/c/include/nvtx3/nvtxDetail/nvtxImpl.h
++++ b/c/include/nvtx3/nvtxDetail/nvtxImpl.h
+@@ -10,11 +10,16 @@
+ #error Never include this file directly -- it is automatically included by nvToolsExt.h (except when NVTX_NO_IMPL is defined).
+ #endif
+ 
++#include <stdlib.h>
++#include <stdio.h>
++#include <string.h>
++#include <wchar.h>
++
+ /* ---- Include required platform headers ---- */
+ 
+ #if defined(_WIN32) 
+ 
+-#include <Windows.h>
++#include <windows.h>
+ 
+ #else
+ #include <unistd.h>
+@@ -27,20 +32,12 @@
+ #include <sched.h>
+ #endif
+ 
++#include <sys/types.h>
+ #include <limits.h>
+ #include <dlfcn.h>
+ #include <fcntl.h>
+-#include <stdlib.h>
+-#include <stdio.h>
+-#include <sys/types.h>
+-#include <unistd.h>
+ #include <errno.h>
+-
+-#include <string.h>
+-#include <sys/types.h>
+ #include <pthread.h>
+-#include <stdlib.h>
+-#include <wchar.h>
+ 
+ #endif
+ 
+diff --git a/c/include/nvtx3/nvtxDetail/nvtxInit.h b/c/include/nvtx3/nvtxDetail/nvtxInit.h
+index 43cad70..84df8da 100644
+--- a/c/include/nvtx3/nvtxDetail/nvtxInit.h
++++ b/c/include/nvtx3/nvtxDetail/nvtxInit.h
+@@ -18,7 +18,7 @@
+ #define NVTX_PATHCHAR   wchar_t
+ #define NVTX_STR(x)     L##x
+ #define NVTX_GETENV     _wgetenv
+-#define NVTX_BUFSIZE    MAX_PATH
++#define NVTX_BUFSIZE    16384
+ #define NVTX_DLLHANDLE  HMODULE
+ #define NVTX_DLLOPEN(x) LoadLibraryW(x)
+ #define NVTX_DLLFUNC    GetProcAddress
+@@ -31,7 +31,7 @@
+ #define NVTX_PATHCHAR   char
+ #define NVTX_STR(x)     x
+ #define NVTX_GETENV     getenv
+-#define NVTX_BUFSIZE    PATH_MAX
++#define NVTX_BUFSIZE    16384
+ #define NVTX_DLLHANDLE  void*
+ #define NVTX_DLLOPEN(x) dlopen(x, RTLD_LAZY)
+ #define NVTX_DLLFUNC    dlsym
