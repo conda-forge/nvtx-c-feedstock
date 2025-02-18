@@ -8,9 +8,6 @@ package:
 source:
   url: https://github.com/NVIDIA/NVTX/archive/v{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  patches:
-    # backport https://github.com/NVIDIA/NVTX/commit/909007c6102a2e5cdea4a51e994e57bfbe13ebb8
-    - patches/0001-Fix-C-header-compile-errors-for-specific-cases-menti.patch
 
 build:
   number: 0
