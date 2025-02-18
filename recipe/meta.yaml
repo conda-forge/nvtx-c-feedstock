@@ -1,5 +1,5 @@
-{% set version = "3.1.0" %}
-{% set sha256 = "dc4e4a227d04d3da46ad920dfee5f7599ac8d6b2ee1809c9067110fb1cc71ced" %}
+{% set version = "3.1.1" %}
+{% set sha256 = "30c9fe2034d5da90c7b2051570dd8b9d59e05b8b9037a1c80bb088dce9c1f5d9" %}
 
 package:
   name: nvtx-c
@@ -8,12 +8,9 @@ package:
 source:
   url: https://github.com/NVIDIA/NVTX/archive/v{{ version }}.tar.gz
   sha256: {{ sha256 }}
-  patches:
-    # backport https://github.com/NVIDIA/NVTX/commit/909007c6102a2e5cdea4a51e994e57bfbe13ebb8
-    - patches/0001-Fix-C-header-compile-errors-for-specific-cases-menti.patch
 
 build:
-  number: 1
+  number: 0
 
 test:
   commands:
