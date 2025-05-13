@@ -3,11 +3,11 @@ About nvtx-c-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/nvtx-c-feedstock/blob/main/LICENSE.txt)
 
-Home: https://nvidia.github.io/NVTX/doxygen/index.html
+Home: https://nvidia.github.io/NVTX/
 
 Package license: Apache-2.0 WITH LLVM-exception
 
-Summary: NVIDA Tool Extension Library (NVTX) C API
+Summary: NVIDIA Tools Extension Library (NVTX) C API
 
 Current build status
 ====================
