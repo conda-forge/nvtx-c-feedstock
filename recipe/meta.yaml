@@ -1,5 +1,5 @@
-{% set version = "3.1.1" %}
-{% set sha256 = "30c9fe2034d5da90c7b2051570dd8b9d59e05b8b9037a1c80bb088dce9c1f5d9" %}
+{% set version = "3.2.0" %}
+{% set sha256 = "9367ca13d05b0f735daaf7bb75e09b1ff3696e592d2aef16465e8e2856696e04" %}
 
 package:
   name: nvtx-c
