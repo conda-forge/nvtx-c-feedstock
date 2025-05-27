@@ -1,8 +1,8 @@
 schema_version: 1
 
 context:
-  version: 3.2.0
-  sha256: 9367ca13d05b0f735daaf7bb75e09b1ff3696e592d2aef16465e8e2856696e04
+  version: "3.2.1"
+  sha256: 737c3035f0e43a2252e7cd94c3f26e11e169f624236efe31794f044ce44a70af
 
 package:
   name: nvtx-c
@@ -34,8 +34,7 @@ tests:
         then: |
           test -e "$PREFIX"/include/nvtx3/nvToolsExt.h
           test -e "$PREFIX"/include/nvtx3/nvtx3.hpp
-      - if: win
-        then: |
+        else: |
           if not exist "%LIBRARY_INC%"\nvtx3\nvToolsExt.h exit 1
           if not exist "%LIBRARY_INC%"\nvtx3\nvtx3.hpp exit 1
   - files:
