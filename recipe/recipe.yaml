@@ -1,8 +1,8 @@
 schema_version: 1
 
 context:
-  version: "3.5.0"
-  sha256: f244c5eec33f9769123a755dda1e9b80339345ab278cf9542ff34677c88804b5
+  version: "3.6.0"
+  sha256: d514b4dccc269ab258ee759c41464f0c8d9a7cf2d109554553a379c0751e68fa
 
 package:
   name: nvtx-c
@@ -13,7 +13,7 @@ source:
   sha256: ${{ sha256 }}
 
 build:
-  number: 1
+  number: 0
 
 requirements:
   build:
